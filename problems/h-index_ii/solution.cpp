@@ -1,14 +1,18 @@
 class Solution {
 public:
-    int hIndex(vector<int>& citations) {
-        if(citations.size()==0)return 0;
-        for(int i =0;i<citations.size();i++)
+    int hIndex(vector<int>& citations) 
+    {
+        int n=citations.size();
+        int start=0,end=n-1;
+        
+        while(start<=end)
         {
-            if(citations[i]>=citations.size()-i)
-            {
-                return citations.size()-i;
-            }
+            int mid=(start+end)/2;
+            if(citations[mid]>=(n-mid))
+                end=mid-1;
+            else
+                start=mid+1;
         }
-        return 0;
-    }
+        return n-start;
+      }
 };
