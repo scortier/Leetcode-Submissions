@@ -1,28 +1,31 @@
 class Solution {
 public:
     int removeBoxes(vector<int>& boxes) {
-        int mem[100][100][100]={0};
-        return dfs(boxes, mem, 0, boxes.size()-1, 0);
+        int lookup[100][100][100] = {0};
+        return removeBoxesHelper(boxes, 0, boxes.size() - 1, 0, lookup);
     }
+    
 private:
-    int dfs(vector<int>& boxes, int mem[100][100][100], int l, int r, int k) {
-        if(l>r) return 0;
-        if(mem[l][r][k]) return mem[l][r][k];
-        
-        while(r>l && boxes[r]==boxes[r-1]) {
-            r--;
-            k++;
+    int removeBoxesHelper(const vector<int>& boxes, int l, int r, int k, int lookup[100][100][100]) {
+        if (l > r) {
+            return 0;
         }
-        mem[l][r][k]=dfs(boxes, mem, l, r-1, 0)+(k+1)*(k+1);
-        for(int i=l; i<r; ++i) {
-            if(boxes[i]==boxes[r]) {
-                mem[l][r][k]=max(mem[l][r][k], dfs(boxes, mem, l, i, k+1)+dfs(boxes, mem, i+1, r-1, 0));
+        if (lookup[l][r][k]) {
+            return lookup[l][r][k];
+        }
+
+        auto& result = lookup[l][r][k];
+        while (l < r && boxes[l + 1] == boxes[l]) {
+            ++l, ++k;
+        }
+        result = removeBoxesHelper(boxes, l + 1, r, 0, lookup) + (k + 1) * (k + 1);
+        for (int i = l + 1; i <= r; ++i) {
+            if (boxes[i] == boxes[l]) {
+                result = max(result,
+                             removeBoxesHelper(boxes, l + 1,  i - 1, 0, lookup) +
+                             removeBoxesHelper(boxes, i, r, k + 1, lookup));
             }
         }
-        
-        
-        return mem[l][r][k];
+        return result;
     }
-    
-    
 };
