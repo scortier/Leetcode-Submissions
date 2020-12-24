@@ -1,15 +1,13 @@
-# Author :- Siddhant Khare
-# Date :- 18 May 2020
+class Solution:
+    def swapPairs(self, head: ListNode) -> ListNode:
+        curr = res = ListNode(-1, head)
 
-class Solution(object):
-    def swapPairs(self, head):
-        """
-        :type head: ListNode
-        :rtype: ListNode
-        """
-        if not head or not head.next:
-            return head
-        new_start = head.next.next
-        head, head.next = head.next, head
-        head.next.next = self.swapPairs(new_start)
-        return head
+        while curr.next and curr.next.next:
+            first, second = curr.next, curr.next.next
+            following = second.next
+
+            curr.next, second.next, first.next = second, first, following
+
+            curr = first
+
+        return res.next 
