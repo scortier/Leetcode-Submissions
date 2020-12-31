@@ -11,11 +11,39 @@
  */
 class Solution {
 public:
-    bool isSameTree(TreeNode* p, TreeNode* q) {
-        if(!p && !q) return 1;
-        if((!p && q)|| (p && !q)) return 0;
-        if(p->val==q->val)
-            return isSameTree(p->left,q->left) && isSameTree(p->right,q->right);
-        else return 0;
+    bool isSameTree(TreeNode* p, TreeNode* q) {        
+        bool isSame = true;            // use to check
+        recursiveHelper(p, q, isSame); // traverese tree recursively
+        return isSame;                 // return result
+    }
+    
+    void recursiveHelper(TreeNode* p, TreeNode* q, bool& isSame) {
+        
+        // base case
+        if (!p && !q) {
+            return;
+        }
+        
+        // not same strucutre
+        else if ( (!p && q) || (p && !q) ) {
+            isSame = false;
+            return;
+        }
+        
+        // same strucutre
+        else {
+            
+            // check same value
+            if (isSame) {
+                p->val != q->val ? isSame = false : isSame = true; // check
+                recursiveHelper(p->left, q->left, isSame);         // traverse left
+                recursiveHelper(p->right, q->right, isSame);       // traverse right
+            }
+            
+            // not the same value
+            else {
+                return;
+            }
+        }
     }
 };
