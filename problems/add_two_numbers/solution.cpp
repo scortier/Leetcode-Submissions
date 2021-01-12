@@ -1,33 +1,66 @@
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
 class Solution {
 public:
-    ListNode *addTwoNumbers(ListNode *l1, ListNode *l2) {
-        ListNode *p1 = l1,*p2 = l2,*fa;
-        int in = 0;
-        while(p1 && p2) {
-            p1->val += p2->val + in;
-            in = 0;
-            if(p1->val > 9) {
-                p1->val %= 10;
-                in=1;
+    ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
+        int r=0,temp=0,rem=0;
+        ListNode* dummy = new ListNode(-1);
+        ListNode* l3 = dummy;
+        while(l1!=nullptr&&l2!=nullptr){
+            temp = l1->val+l2->val+r;
+            if(temp>=10){
+                r = temp/10;
+                rem=temp%10;
+                dummy->next = new ListNode(rem);
             }
-            fa = p1;
-            p1 = p1->next;p2 = p2->next;
-        }
-        if(p2) {
-            fa->next=p2;p1=p2;
-        }
-        while(in) {
-            if(p1 == NULL) {
-                p1= new ListNode(0);
-                fa->next = p1;
+            else{
+                r=0;
+                dummy->next = new ListNode(temp);
             }
-            p1->val += in;in = 0;
-            if(p1->val > 9) {
-                p1->val%=10;
-                in = 1;
-            }
-            fa = p1;p1 = p1->next;
+            l1=l1->next;
+            l2=l2->next;
+            dummy=dummy->next;
         }
-        return l1;
+        int p;
+        while(l1!=nullptr){
+            p=r+l1->val;
+            if(p>=10){
+                r=p/10;
+                rem=p%10;
+                dummy->next = new ListNode(rem);
+            }
+            else{
+                r=0;
+                dummy->next = new ListNode(p);
+            }
+            l1=l1->next;
+            dummy=dummy->next;
+        }
+        while(l2!=nullptr){
+            p=r+l2->val;
+            if(p>=10){
+                r=p/10;
+                rem=p%10;
+                dummy->next = new ListNode(rem);
+            }
+            else{
+                r=0;
+                dummy->next = new ListNode(p);
+            }
+            l2=l2->next;
+            dummy=dummy->next;
+        }
+        if(r!=0){
+            dummy->next = new ListNode(r);
+        }
+        return l3->next;
     }
 };
