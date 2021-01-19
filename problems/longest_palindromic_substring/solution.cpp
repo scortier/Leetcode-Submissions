@@ -1,37 +1,35 @@
 class Solution {
 public:
     string longestPalindrome(string s) {
-        const int n = s.size();
-        int max{};
+
+        int i,j,n,mx=1,l;
         string ans;
-        if(n == 1) return s;
-        for(int i = 0; i < n; i++){
-            int x = i, y = i;
-            int count = 1;
-            while(x > 0 && y < n - 1 && s[x - 1] == s[y + 1]){
-                x--;
-                y++;
-                count += 2;
-            }
-            if(count > max){
-                ans = s.substr(x, count);
-                max = count;
-            } 
-            if(i < n - 1 && s[i] == s[i + 1]){
-                int x = i, y = i + 1;
-                count = 2;
-                while (x > 0 && y < n - 1 && s[x - 1] == s[y + 1]){
-                    x--;
-                    y++;
-                    count += 2;
-                }
-                if(count > max)
+        n=s.size();
+        l=0;
+
+        vector<vector<bool>> dp(n,vector<bool>(n,false));
+
+        for(i=0;i<n;i++)
+            dp[i][i]=true;
+
+        for(j=0;j<n;j++)
+        {
+            for(i=0;i<j;i++)
+            {
+                if( (s[j] == s[i] && dp[i+1][j-1]) || (s[i]==s[j] && j==i+1))
                 {
-                    ans = s.substr(x, count);
-                    max = count;
+                    dp[i][j]=true;
+                    if(j-i+1>mx)
+                    {
+                        mx=j-i+1;
+                        l=i;
+                    }
                 }
             }
         }
+
+        ans = s.substr(l,mx);
+
         return ans;
     }
 };
