@@ -1,123 +1,32 @@
-#include <bits/stdc++.h>
-
-using namespace std;
-
-class MinHeap
-{
-    ListNode ** heap;
-    int heapsize;
-public:
-    MinHeap(vector<ListNode*> &v)
-    {
-        heapsize = v.size();
-        heap = &v[0];
-    }
-    int left(int index)
-    {
-        int l = 2*index+1;
-        if(l>=heapsize)
-            return -1;
-        return l;
-    }
-    int right(int index)
-    {
-        int r = 2*index+2;
-        if(r>=heapsize)
-            return -1;
-        return r;
-    }
-    int parent(int index)
-    {
-        if(index >= 1)
-        {
-            return (index-1)/2;
-        }
-        return -1;
-    }
-    void replaceRoot(ListNode *n)
-    {
-        heap[0] = n;
-        Heapify(0);
-    }
-    void deleteMin()
-    {
-        swap(heap[0],heap[heapsize-1]);
-        heapsize--;
-        Heapify(0);
-
-    }
-    void Heapify(int index)
-    {
-        if(index < 0 || heap[index] == NULL)
-            return;
-        int smaller = index;
-        if(left(index) !=  -1 && heap[left(index)] && heap[left(index)]->val < heap[smaller]->val)
-            smaller = left(index);
-        if(right(index) != -1 && heap[right(index)] && heap[right(index)]->val < heap[smaller]->val)
-            smaller = right(index);
-
-        if(smaller != index)
-        {
-            swap(heap[index], heap[smaller]);
-            Heapify(smaller);
-        }
-    }
-    ListNode* getMin(){return heap[0];}
-    bool isEmpty(){return (heapsize == 0);}
-};
-
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
 class Solution {
 public:
-    ListNode* mergeKLists(vector<ListNode*>& lists_orig)
-    {
-        vector<ListNode *> lists;
-        for(ListNode* l : lists_orig)
-        {
-            if(l)
-                lists.push_back(l);
-        }
-
-        if(lists.size() == 0)
-            return NULL;
-
-        ListNode  * head = NULL;
-        ListNode* res = NULL;
-        MinHeap *H = new MinHeap(lists);
-        int start;
-        if(lists.size() > 1)
-            start = H->parent(lists.size()-1);
-        else
-            start = 0;
-
-        while(start >= 0)
-        {
-            H->Heapify(start--);
-        }
-        while(!H->isEmpty())
-        {
-            ListNode *n = H->getMin();
-            ListNode *n1 = n->next;
-            n->next = NULL;
-            if(res == NULL)
-            {
-                head = n;
-                res = head;
+    ListNode* mergeKLists(vector<ListNode*>& lists) {
+        ListNode* sentinel = new ListNode(0);
+        ListNode* curr = sentinel;
+        pair<ListNode*, int> curr_min = {new ListNode(INT_MAX), 0};
+        while (curr_min.second != -1) {
+            curr_min = {new ListNode(INT_MAX), -1};
+            for (int i = 0; i < lists.size(); ++i) {
+                if (lists[i] && lists[i]->val < curr_min.first->val) {
+                    curr_min = {lists[i], i};
+                }
             }
-            else
-            {
-                res->next = n;
-                res = res->next;
-            }
-
-            if(n1)
-            {
-                H->replaceRoot(n1);
-            }
-            else
-            {
-                H->deleteMin();
+            if (curr_min.second != -1) {
+                curr->next = new ListNode(curr_min.first->val);
+                curr = curr->next;
+                lists[curr_min.second] = lists[curr_min.second]->next;
             }
         }
-        return head;
+        return sentinel->next;
     }
 };
