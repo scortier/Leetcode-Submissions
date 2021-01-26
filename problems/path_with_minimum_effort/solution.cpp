@@ -1,81 +1,39 @@
 class Solution {
+    const vector<vector<int>> dirs {{-1, 0}, {0, 1}, {1, 0}, {0, -1}};
+
 public:
-    int minimumEffortPath(const vector<vector<int>>& h) {
-        
-        // get in front  and sizeing 
-        
-        int n = h.size(), m = h.front().size();
-        // vector array 
-        
-        vector<vector<int>> e(n, vector<int>(m, int(1e9))); 
-        // vector array 
-        vector<vector<bool>> flag(n, vector<bool>(m));
+    int minimumEffortPath(vector<vector<int>>& heights) {
+        int m = heights.size(), n = heights[0].size();
+        vector<vector<int>> dist(m, vector<int>(n, INT_MAX));
+        dist[0][0] = 0;
 
-        
-        // vector array 
-        
-        vector<int> dx = {-1, 0, 1, 0};
-        vector<int> dy = {0, 1, 0, -1};
+        // custom comparator to sort set based on distance
+        auto comp = [](auto a, auto b) { return a[0] < b[0]; };
+        set<vector<int>> s;
+        s.insert({0, 0, 0});    // stores {distance, row, column}
 
-        // list array
-        
-        list<pair<int, int>> li = {{0, 0}};
-        flag[0][0] = true;
-        e[0][0] = 0;
-        
-        // while loop 
-        
-        while (!li.empty()) {
-            auto [x, y] = li.front();
-            flag[x][y] = false;
-            
-            // remove  1st 
-            
-            li.pop_front();
-            
-            // slow 
-            
-            for (int i = 0; i < 4; i++) {
-                
-                // eqn 
-                
-                int tx = x + dx[i], ty = y + dy[i];
-                
-                // excecution 
-                
-                if (tx >= 0 && ty >= 0 && tx < n && ty < m) {
-                    
-                    // array 
-                    
-                    int ef = max(e[x][y], abs(h[x][y] - h[tx][ty]));
-                    
-                    // logical execution 
-                    
-                    if (ef < e[tx][ty]) {
-                        e[tx][ty] = ef;
-                        
-                        // array 
-                        
-                        if (!flag[tx][ty]) {
-                            // truew
-                            
-                            flag[tx][ty] = true;
-                            
-                            // add at last 
-                            
-                            li.push_back({tx, ty});
-                        }
-                        // end
+        while(!s.empty()) {
+            // pull out cell with min distance
+            auto it = s.begin();
+            int d = (*it)[0], r = (*it)[1], c = (*it)[2];
+            s.erase(it);
+
+            // if reached bottom right cell
+            if(r == m-1 and c == n-1)   return d;
+
+            for(auto dir: dirs) {
+                int nr = r + dir[0], nc = c + dir[1];
+
+                if(nr >= 0 and nr < m and nc >= 0 and nc < n) {
+                    int newDist = max(d, abs(heights[r][c] - heights[nr][nc]));
+
+                    if(newDist < dist[nr][nc]) {
+                        dist[nr][nc] = newDist;
+                        s.insert({newDist, nr, nc});
                     }
-                    //end
                 }
-                // end 
             }
-            // end
         }
-        
-        // answer 
-        
-        return e[n - 1][m - 1];
+        return 0;
     }
-}; 
+};
