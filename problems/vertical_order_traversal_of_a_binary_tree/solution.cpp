@@ -1,38 +1,42 @@
-class Node{
-public:
-    int val;
-    int Y;
-    Node(int v,int y)
-    {
-        val=v;
-        Y=y;
-    }
-};
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
 class Solution {
-    map<int,vector<Node>>mp;
+void dfs(TreeNode* node, int r, int c, unordered_map<int, vector<pair<int, int>>>& cache, int& minC, int& maxC){
+        if(node == nullptr) return;
+        if(cache.count(c)) cache[c].push_back({r, node->val});
+        else cache.insert({c, {{r, node->val}}});
+        minC = min(minC, c);
+        maxC = max(maxC, c);
+        dfs(node->left, r+1, c-1, cache, minC, maxC);
+        dfs(node->right, r+1, c+1, cache, minC, maxC);
+    }
 public:
-    static bool cmp(Node a,Node b)
-    {
-        if(a.Y==b.Y) return a.val < b.val;
-        return a.Y > b.Y;
-    }
-    void find(TreeNode*r,int x,int y)
-    {
-        if(r==NULL) return;
-        mp[x].push_back(Node(r->val,y));
-        find(r->left,x-1,y-1);
-        find(r->right,x+1,y-1);
-    }
     vector<vector<int>> verticalTraversal(TreeNode* root) {
-        vector<vector<int>>ans;
-        find(root,0,0);
-        for(auto it=mp.begin();it!=mp.end();it++)
-        {
-            sort((it->second).begin(),(it->second).end(),cmp);
-            vector<int>pb;
-            for(auto a:it->second) pb.push_back(a.val);
-            ans.push_back(pb);
+        vector<vector<int>> result;
+        if(root == nullptr) return result;
+
+        unordered_map<int, vector<pair<int, int>>> cache;
+        int minC = 0, maxC = 0;
+        dfs(root, 0, 0, cache, minC, maxC);
+
+        for(int c = minC; c < maxC+1; ++c){
+            sort(cache[c].begin(), cache[c].end(), [](pair<int, int>& p1, pair<int, int>& p2){
+                return (p1.first < p2.first) || ((p1.first == p2.first) && (p1.second < p2.second));
+            });
+            vector<int> col;
+            for(pair<int, int>& p: cache[c])
+                col.push_back(p.second);
+            result.push_back(col);
         }
-        return ans;
+        return result;
     }
 };
