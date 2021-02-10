@@ -1,5 +1,5 @@
 # Submissions
-
+> *Generated with ❤ using [Leetcode-Sync](https://github.com/joshcai/leetcode-sync)*
 ## Introduction
 
 A repository to keep track of problem solving practice, containing solutions from platforms:
