@@ -1,44 +1,34 @@
-class Solution 
-{
+class Solution {
 public:
-    int dirx[4]={-1,0,1,0};//for the four directions
-    int diry[4]={ 0,1,0,-1};// for four directions 
-    int dfs(vector<vector<int>>&mat,int m,int n,vector<vector<int>>&dp,int i,int j)
-    {
-        if(i<0||i>=m||j<0||j>=n)
-            return 0;
-        if(dp[i][j]>1)
-            return dp[i][j];
-        for(int p=0;p<4;p++)
-        {
-            int x=i+dirx[p],y=j+diry[p];
-            if(!(x<0||x>=m||y<0||y>=n))
-            {
-                if(mat[x][y]>mat[i][j])// checked for necessary condition 
-                  dp[i][j]=max(dp[i][j],1+dfs(mat,m,n,dp,x,y));//then updated as i got the point 
-            }   
+    int m, n;
+    vector<vector<int>> dirs = {{0,1}, {0,-1}, {1, 0}, {-1, 0}};
+    int longestIncreasingPath(vector<vector<int>>& matrix) {
+        m = matrix.size(); n = matrix[0].size();
+        int res = 0;
+        vector<vector<int>> visited(m, vector<int> (n, 0));
+        for(int i = 0; i < m; i++){
+            for(int j = 0; j < n; j++){
+                res = max(res, dfs(i, j, visited, matrix));
+            }
+
         }
-        return dp[i][j];
+        return res;
+
     }
-    int longestIncreasingPath(vector<vector<int>>& matrix) 
-    {  
-        int m=matrix.size();
-        if(m==0)
-            return 0;
-        int n=matrix[0].size(),l=0;
-        vector<vector<int>>dp(m,vector<int>(n,1));
-        for(int i=0;i<m;i++)
-        {
-            for(int j=0;j<n;j++)
-            {
-                if(dp[i][j]==1)
-                {
-                    dfs(matrix,m,n,dp,i,j);
-                    l=max(l,dp[i][j]);
-                } 
+    int dfs(int i, int j, vector<vector<int>>& visited, vector<vector<int>>& matrix){
+        if(visited[i][j] > 0) return visited[i][j];
+
+        int max_res = 0;
+        for(auto& dir:dirs){
+            int x = i + dir[0], y = j + dir[1];
+            if(x >= 0 && x < m && y >= 0 && y < n && matrix[x][y] > matrix[i][j]){
+                max_res = max(max_res, dfs(x, y, visited, matrix));
             }
         }
-        return l;
-    
+
+
+        visited[i][j] = max_res + 1;    
+        return visited[i][j];
     }
+
 };
