@@ -1,31 +1,22 @@
 class Solution {
 public:
     int findJudge(int N, vector<vector<int>>& trust) {
-        // defining variables
+         vector<int> count(N+1);
         
-        int sz = trust.size(),i;
-        
-        //defining end of array
-        
-        int trustees[1001]={0};
-        int trusts[1001]={0};
-        
-        // for loop logical execution
-        
-        for(i=0;i<sz;i++){
+        for(int i=0; i < trust.size(); i++)
+        {
+            // trust[A][B]  => A trusts B // A can never be judge
+            count[trust[i][0]] = -1;
             
-            trusts[trust[i][0]]++;
-            trustees[trust[i][1]]++;
+            // trust[A][B]  => A trusts B // B will be increased because it is trusted by one person
+            count[trust[i][1]]++;
         }
-        
-        // for loop for for number of loops
-        
-        for(i=1;i<=N;i++){
-            if(trustees[i] == N-1 && trusts[i]==0) return i;
+            
+        for (int i = 1; i <= N; i++) {
+            // if someone is trusted by N-1 person, ofcourse he is a judge
+            if (count[i] == N - 1)
+                return i;
         }
-        
-        // returning values & printing answer
-        
         return -1;
     }
 };
