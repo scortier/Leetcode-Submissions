@@ -1,13 +1,16 @@
 class Solution {
 public:
-    string largestTimeFromDigits(vector<int>& A) {
+    string largestTimeFromDigits(vector<int>& arr) {
+        string ans = "", res;
+        sort(arr.begin(),arr.end());
         
-        sort(A.begin(), A.end(), greater<int>());
+        do{
+            if((arr[0] ==2 && arr[1]<=3 || arr[0]<2) && arr[2]<=5){
+                res = to_string(arr[0])+to_string(arr[1])+ ":" + to_string(arr[2]) + to_string(arr[3]);
+            }
+            ans = max(ans,res);
+        }while(next_permutation(arr.begin(),arr.end()));
         
-        do{    
-            if ((A[0] < 2 || (A[0] == 2 && A[1] < 4)) && A[2] < 6)
-                return to_string(A[0])+to_string(A[1])+":"+to_string(A[2])+to_string(A[3]);
-        } while(prev_permutation(A.begin(), A.end()));
-        return "";
+        return ans;
     }
 };
